@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>{% block title %}Easy Meals Finder{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <div class="logo">Easy Meals</div>
+        <nav>
+            <div class="hamburger-menu">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('search') }}">Search</a></li>
+                {% if 'user_id' in session %}
+                    <li><a href="{{ url_for('favorites') }}">Favorites</a></li>
+                    <li><a href="{{ url_for('shopping_list') }}">Shopping List</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Eric Mwangi. For Harvard CS50 Final Project.</p>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            $('.hamburger-menu').click(function() {
+                $('.nav-links').toggleClass('active');
+            });
+        });
+    </script>
+</body>
+</html>

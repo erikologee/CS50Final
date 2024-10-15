@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% elif recipe %}
+    <h3>{{ recipe.title }}</h3>
+    <!-- Display the recipe thumbnail -->
+    <img src="{{ recipe.image }}" alt="{{ recipe.title }} thumbnail" class="recipe-thumbnail">
+    
+    <!-- Display meal type -->
+    <h4>Meal Type: {{ recipe.dishTypes | join(', ') }} </h4>
+  
+    
+    <!-- Display ingredients -->
+    <h4>Ingredients:</h4>
+    <ul class="ingredients-list">
+        {% for ingredient in recipe.extendedIngredients %}
+            <li>{{ ingredient.original }}</li>
+        {% endfor %}
+    </ul>
+
+{% else %}
+    <p>No recipe available at the moment.</p>
+{% endif %}
+{% endblock %}

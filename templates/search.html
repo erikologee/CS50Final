@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Search Recipes{% endblock %}
+
+{% block content %}
+    <h1>Search Recipes</h1>
+    <input type="text" id="search-input" placeholder="Enter recipe name...">
+    <button id="search-button">Search</button>
+
+    <h2>Search Results:</h2>
+    <div id="search-results"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#search-button').click(function() {
+                var query = $('#search-input').val();
+                $.ajax({
+                    url: '/api/search',
+                    method: 'GET',
+                    data: { query: query },
+                    success: function(data) {
+                        $('#search-results').empty();  // Clear previous results
+                        data.results.forEach(function(recipe) {
+                            $('#search-results').append(`
+                                <div class="recipe-card">
+                                    <h3>${recipe.title}</h3>
+                                    <img src="${recipe.image}" alt="${recipe.title}" width="200">
+                                    <a href="/recipe/${recipe.id}" class="btn">View Recipe</a>
+                                </div>
+                            `);
+                        });
+                    },
+                    error: function(error) {
+                        $('#search-results').html('<p>Error fetching results.</p>');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Favorites{% endblock %}
+
+{% block content %}
+    <h1>Your Favorite Recipes</h1>
+    
+    {% if recipes %}
+        <div class="recipe-grid">
+            {% for recipe in recipes %}
+                <div class="recipe-card">
+                    <h3>{{ recipe.title }}</h3>
+                    {% if recipe.image %}
+                        <img src="{{ recipe.image }}" alt="{{ recipe.title }}" width="200">
+                    {% endif %}
+                    <a href="{{ url_for('recipe_detail', recipe_id=recipe.id) }}" class="btn">View Recipe</a>
+                    <form action="{{ url_for('remove_favorite', recipe_id=recipe.id) }}" method="post" class="inline-form">
+                        <button type="submit" class="btn btn-danger">Remove from Favorites</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have no favorite recipes yet. Start browsing and add some!</p>
+    {% endif %}
+{% endblock %}

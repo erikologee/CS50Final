@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Recipe Detail{% endblock %}
+
+{% block content %}
+    <h1>{{ recipe.title }}</h1>
+
+    {% if recipe.image %}
+        <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="recipe-image">
+    {% endif %}
+
+    {% if recipe.summary %}
+        <p>{{ recipe.summary | safe }}</p>
+    {% endif %}
+
+    <h3>Ingredients</h3>
+    {% if recipe.extendedIngredients %}
+        <ul class="ingredients-list">
+            {% for ingredient in recipe.extendedIngredients %}
+                <li>{{ ingredient.original }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No ingredients available.</p>
+    {% endif %}
+
+    <h3>Instructions</h3>
+    {% if recipe.analyzedInstructions and recipe.analyzedInstructions[0].steps %}
+        <ol class="instructions-list">
+            {% for step in recipe.analyzedInstructions[0].steps %}
+                <li>{{ step.step }}</li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <p>No instructions available.</p>
+    {% endif %}
+
+    {% if session.user_id %}
+        <button id="favorite-btn" data-recipe-id="{{ recipe_id }}" class="btn">
+            {% if is_favorite %}
+                Remove from Favorites
+            {% else %}
+                Add to Favorites
+            {% endif %}
+        </button>
+    {% else %}
+        <p><a href="{{ url_for('login') }}">Log in</a> to add this recipe to your favorites.</p>
+    {% endif %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $('#favorite-btn').on('click', function() {
+            const recipeId = $(this).data('recipeId');
+
+            if (!recipeId) {
+                alert("Error: Could not determine recipe ID");
+                return;
+            }
+
+            const action = $(this).text().trim() === 'Add to Favorites' ? 'add_favorite' : 'remove_favorite/' + recipeId;
+
+            $.ajax({
+                url: '/' + action,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ recipe_id: recipeId }),
+                success: function(response) {
+                    if (response.status === 'success') {
+                        const newAction = $('#favorite-btn').text().trim() === 'Add to Favorites' 
+                            ? 'Remove from Favorites' 
+                            : 'Add to Favorites';
+                        $('#favorite-btn').text(newAction);
+                    } else {
+                        alert(response.message || "An error occurred");
+                    }
+                },
+                error: function(xhr) {
+                    alert(xhr.responseJSON.message || "An error occurred");
+                }
+            });
+        });
+    </script>
+{% endblock %}

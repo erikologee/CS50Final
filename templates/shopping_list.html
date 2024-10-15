@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Search Recipes{% endblock %}
+
+{% block content %}
+
+<h1>Shopping List</h1>
+<table class="table" id="shopping-list">
+    <thead>
+        <tr>
+            <th>Purchased</th>
+            <th>Ingredient</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if ingredients %}
+            {% for ingredient, quantity in ingredients.items() %}
+                <tr>
+                    <td>
+                        <input type="checkbox" class="ingredient-checkbox" id="checkbox-{{ loop.index }}" data-ingredient="{{ ingredient }}">
+                    </td>
+                    <td>
+                        <label for="checkbox-{{ loop.index }}">{{ ingredient.split('(')[0].strip() }}</label>
+                    </td>
+                    <td>{{ quantity }}</td>  <!-- Moved quantity to its own cell -->
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="3">No ingredients found.</td>  <!-- Message when no ingredients -->
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+{% endblock %}
